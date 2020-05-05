@@ -1,0 +1,4 @@
+rootProject.name='MyHttp'
+include ':app'
+include ':dnapp', ':SocketTest'
+
