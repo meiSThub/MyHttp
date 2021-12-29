@@ -1,10 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config xmlns:android="http://schemas.android.com/apk/res/android">
-<!--    <debug-overrides>-->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+
+    <!--1.全局的基础配置-->
+    <!--如果不配置 base-config ，默认就是<certificates src="system" /> ，即只信任系统证书-->
+<!--    <base-config>-->
 <!--        <trust-anchors>-->
-<!--            <certificates src="system" />-->
-<!--            <certificates src="user" />-->
+<!--            &lt;!&ndash;这样配置之后，表示App只信任配置的证书&ndash;&gt;-->
+<!--            <certificates src="@raw/juejin" />-->
 <!--        </trust-anchors>-->
-<!--    </debug-overrides>-->
+<!--    </base-config>-->
+
+    <!--2.除了全局配置外，还可以针对特定的域名，配置特定的信任证书-->
+<!--    <domain-config>-->
+<!--        &lt;!&ndash;域名&ndash;&gt;-->
+<!--        <domain includeSubdomains="false">juejin.cn</domain>-->
+<!--        <pin-set>-->
+<!--            <pin digest="SHA-256">bCyTfyF4MY0Vx6sa6j+AYVRdHbhZvC2w3XvCAo6sMCg=</pin>-->
+<!--        </pin-set>-->
+
+<!--        &lt;!&ndash;该域名信任的证书&ndash;&gt;-->
+<!--        <trust-anchors>-->
+<!--            <certificates src="@raw/juejin" />-->
+<!--        </trust-anchors>-->
+<!--    </domain-config>-->
+
 
 </network-security-config>

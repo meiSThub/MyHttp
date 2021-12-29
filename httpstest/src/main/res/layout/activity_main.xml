@@ -11,6 +11,12 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="-------7.0以上抓包-------" />
+
         <Button
             android:id="@+id/doRequest"
             android:layout_width="match_parent"
@@ -24,6 +30,34 @@
             android:layout_height="wrap_content"
             android:onClick="trustAllCertificate"
             android:text="2.信任所有的证书"
+            android:textAllCaps="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:text="-------预防抓包-------" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="pinCertificate"
+            android:text="1.证书文件锁定"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="pinCertificateSha256"
+            android:text="2.证书指纹锁定"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="pinPublicKey"
+            android:text="3.证书公钥锁定"
             android:textAllCaps="false" />
 
         <TextView
