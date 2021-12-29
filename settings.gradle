@@ -3,3 +3,4 @@ include ':app'
 include ':dnapp', ':SocketTest'
 
 include ':httpstest'
+include ':okhttp-3.14.9'
