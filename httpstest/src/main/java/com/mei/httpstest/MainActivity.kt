@@ -15,10 +15,7 @@ import java.security.KeyStore
 import java.security.SecureRandom
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.X509TrustManager
+import javax.net.ssl.*
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -129,20 +126,41 @@ class MainActivity : AppCompatActivity() {
             // 执行网络请求
             val response = OkHttpClient.Builder().apply {
                 // 1.使用证书文件作为InputStream加载KeyStore并创建一个Keystore
-                val certificateInputStream = resources.openRawResource(R.raw.juejin)
                 val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
-                keyStore.load(null)
-                keyStore.setCertificateEntry("juejin", CertificateFactory.getInstance("X.509").generateCertificate(certificateInputStream))
+                keyStore.load(null, null)
+
+                val certificateInputStream = resources.openRawResource(R.raw.juejin)
+                keyStore.setCertificateEntry("juejin",
+                    CertificateFactory.getInstance("X.509").generateCertificate(certificateInputStream)
+                )
+
+                // val certificateFactory = CertificateFactory.getInstance("X.509")
+                // val certificates = certificateFactory.generateCertificates(certificateInputStream)
+                // certificates.forEachIndexed { index, certificate ->
+                //     val certificateAlias = index.toString()
+                //     keyStore.setCertificateEntry(certificateAlias, certificate)
+                // }
 
                 // 2.使用创建的KeyStore创建一个TrustManager
-                val defaultAlgorithm = TrustManagerFactory.getDefaultAlgorithm()
-                val trustManagerFactory = TrustManagerFactory.getInstance(defaultAlgorithm)
+                val trustManagerFactory: TrustManagerFactory = TrustManagerFactory.getInstance(
+                    TrustManagerFactory.getDefaultAlgorithm()
+                )
                 trustManagerFactory.init(keyStore)
+                // 使用创建的KeyStore创建一个KeyManagerFactory对象
+                val keyManagerFactory: KeyManagerFactory = KeyManagerFactory.getInstance(
+                    KeyManagerFactory.getDefaultAlgorithm()
+                )
+                keyManagerFactory.init(keyStore, null)
+
+                val keyManagers = keyManagerFactory.keyManagers
+                val trustManagers = trustManagerFactory.trustManagers
+
                 // 3.创建一个SSLSocketFactory对象
                 val sslContext = SSLContext.getInstance("TLS")
-                sslContext.init(null, trustManagerFactory.trustManagers, SecureRandom())
+                sslContext.init(keyManagers, trustManagers, SecureRandom())
+
                 // 4.把创建的SSLSocketFactory对象，设置为OkHttp，进行证书文件锁定
-                sslSocketFactory(sslContext.socketFactory)
+                sslSocketFactory(sslContext.socketFactory, trustManagers[0] as X509TrustManager)
 
             }.build().newCall(request).execute() // 执行网络请求
             // 返回结果
@@ -222,7 +240,11 @@ class MainActivity : AppCompatActivity() {
                 val certificateInputStream = resources.openRawResource(R.raw.juejin)
                 val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
                 keyStore.load(null)
-                keyStore.setCertificateEntry("juejin", CertificateFactory.getInstance("X.509").generateCertificate(certificateInputStream))
+                keyStore.setCertificateEntry(
+                    "juejin",
+                    CertificateFactory.getInstance("X.509")
+                        .generateCertificate(certificateInputStream)
+                )
 
                 // 2.使用创建的KeyStore创建一个TrustManager
                 val defaultAlgorithm = TrustManagerFactory.getDefaultAlgorithm()
