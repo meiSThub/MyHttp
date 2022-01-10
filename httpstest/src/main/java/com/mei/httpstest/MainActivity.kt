@@ -23,6 +23,9 @@ class MainActivity : AppCompatActivity() {
 
         private const val TEST_URL = "https://juejin.cn/post/7017608469901475847"
         // private const val TEST_URL = "https://www.baidu.com/"
+
+        private const val JUEJIN_PUBLIC_KEY =
+            "30820122300D06092A864886F70D01010105000382010F003082010A0282010100BE9A3B2A23981043035B331584BE30D500C41AAC286A43DAB889763E7BB715B044F6DF2445FBA9762F288FC68B81A853F1A9490F6F9141761F59B42065F827AC58EBC006207A2A27A1682C845F1830E046E12D168988B02254BE36E026B117C49A9B9F31AF3F4CD389395A1FB2F0AD1F96C650D6A0D856DF299796C0630AE73E92D83D67B697596E715DDDA70037AF0E39E49B3227AD26B4BCEEF72896D30ACAA0CC77A87AED79F8B637808C411E195B7737ACF931C112A11221A21DBFAD050B5DE28734FC852CD5E973428BD2CED7897990FA45A03D67C0FC655A81B521DD1F211024D06F30DEE0B1910E6483E342308D69A269DE5415F286229EFBB1A3088D0203010001"
     }
 
     private val mBinding by lazy {
@@ -48,11 +51,12 @@ class MainActivity : AppCompatActivity() {
         }
         lifecycleScope.launch(exceptionHandler) {
             try {
-                val response = async(Dispatchers.IO) {
-                    OkHttpClient().newCall(request).execute()
+                val response = withContext(Dispatchers.IO) {
+                    val response = OkHttpClient().newCall(request).execute()
+                    response.body()?.string()
                 }
 
-                mBinding.tvContent.text = "返回结果：${response.await().body()?.string()}"
+                mBinding.tvContent.text = "返回结果：${response}"
             } catch (e: Exception) {
                 mBinding.tvContent.text = "返回结果：${e.message}"
             }
@@ -130,8 +134,10 @@ class MainActivity : AppCompatActivity() {
                 keyStore.load(null, null)
 
                 val certificateInputStream = resources.openRawResource(R.raw.juejin)
-                keyStore.setCertificateEntry("juejin",
-                    CertificateFactory.getInstance("X.509").generateCertificate(certificateInputStream)
+                keyStore.setCertificateEntry(
+                    "juejin",
+                    CertificateFactory.getInstance("X.509")
+                        .generateCertificate(certificateInputStream)
                 )
 
                 // val certificateFactory = CertificateFactory.getInstance("X.509")
