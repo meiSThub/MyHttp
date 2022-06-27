@@ -36,7 +36,7 @@ public class CallServiceInterceptor implements Interceptor {
         Map<String, String> headers = httpCodec.readHeaders(is);
 
         //根据Content-Length 解析
-        // 2-3.读取响应体，即服务器返回到数据
+        // 2-3.读取响应体，即服务器返回的数据
         int contentLength = -1;
         if (headers.containsKey("Content-Length")) {
             contentLength = Integer.valueOf(headers.get("Content-Length"));
